@@ -1,3 +1,5 @@
+// 判断执行的方式
+
 import { connect } from 'react-redux'
 import { toggleTodo } from '../actions'
 import TodoList from '../components/TodoList'

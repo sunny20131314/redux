@@ -1,10 +1,16 @@
+/*
+* react-redux: connect
+* */
+
+
 import React from 'react'
 import { connect } from 'react-redux'
 import { addTodo } from '../actions'
 
+
+
 let AddTodo = ({ dispatch }) => {
   let input
-
   return (
     <div>
       <form onSubmit={e => {
@@ -25,6 +31,9 @@ let AddTodo = ({ dispatch }) => {
     </div>
   )
 }
+
+
+// // 包装 component ，注入 dispatch 和 state 到其默认的 connect(select-- 参数)(AddTodo 组件) 中；
 AddTodo = connect()(AddTodo)
 
 export default AddTodo

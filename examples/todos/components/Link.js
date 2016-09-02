@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 
 const Link = ({ active, children, onClick }) => {
+  console.log( active, children, onClick , ' active, children, onClick Links~~~~' );
   if (active) {
     return <span>{children}</span>
   }
