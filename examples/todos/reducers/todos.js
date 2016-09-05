@@ -14,6 +14,7 @@
 // 不要在 reducer 中有 API 调用
 
 const todo = (state, action) => {
+  console.log( state, action, 'state, action, todo~~~~' )
   switch (action.type) {
     case 'ADD_TODO':
       return {
@@ -39,6 +40,7 @@ const todo = (state, action) => {
 }
 
 const todos = (state = [], action) => {
+  console.log( state, action, 'state, action, todos~~~~' )
   switch (action.type) {
     case 'ADD_TODO':
       return [
