@@ -33,7 +33,9 @@ let AddTodo = ({ dispatch }) => {
 }
 
 
+
 // // 包装 component ，注入 dispatch 和 state 到其默认的 connect(select-- 参数)(AddTodo 组件) 中；
+// Inject just dispatch and don't listen to store,
 AddTodo = connect()(AddTodo)
 
 export default AddTodo

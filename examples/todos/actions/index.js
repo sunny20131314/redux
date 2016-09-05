@@ -1,3 +1,5 @@
+// action
+// 封装了一层, 定义type等, 返回的结果传递给reducer
 let nextTodoId = 0
 
 export const addTodo = (text) => {

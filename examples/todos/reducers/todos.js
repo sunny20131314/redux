@@ -4,6 +4,15 @@
 * 注意 reducer 是纯函数。它仅仅用于计算下一个 state。它应该是完全可预测的：多次传入相同的输入必须产生相同的输出。
 * 它不应做有副作用的操作，如 API 调用或路由跳转。这些应该在 dispatch action 前发生
  */
+
+
+// reducer
+// type Reducer<S, A> = (state: S, action: A) => S
+// 处理当前store, return 处理后的, 按理是和之前的合并了, 具体不详~~~
+// Reducer (也称为 reducing function) 函数接受两个参数：
+// 之前累积运算的结果(state)和当前被累积的值(action)，返回的是一个新的累积结果。该函数把一个集合归并成一个单值。
+// 不要在 reducer 中有 API 调用
+
 const todo = (state, action) => {
   switch (action.type) {
     case 'ADD_TODO':
