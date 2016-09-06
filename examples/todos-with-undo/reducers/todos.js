@@ -1,3 +1,4 @@
+// distinctState
 import undoable, { distinctState } from 'redux-undo'
 
 const todo = (state, action) => {

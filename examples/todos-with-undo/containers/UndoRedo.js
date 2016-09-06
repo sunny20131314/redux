@@ -13,6 +13,7 @@ let UndoRedo = ({ canUndo, canRedo, onUndo, onRedo }) => (
   </p>
 )
 
+//  past, future 应该是数组, redux-undo封装
 const mapStateToProps = (state) => {
   return {
     canUndo: state.todos.past.length > 0,
