@@ -9,6 +9,7 @@ import reducer from './reducers'
 import { getAllProducts } from './actions'
 import App from './containers/App'
 
+// production -> 生产环境, 开发环境
 const middleware = process.env.NODE_ENV === 'production' ?
   [ thunk ] :
   [ thunk, logger() ]
