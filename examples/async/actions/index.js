@@ -1,5 +1,7 @@
+// 对fetch进行封装, 请求前, 请求中, 请求后!!!
 import fetch from 'isomorphic-fetch'
 
+// 以防止改变某一变量
 export const REQUEST_POSTS = 'REQUEST_POSTS'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
 export const SELECT_REDDIT = 'SELECT_REDDIT'

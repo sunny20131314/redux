@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Redux Todos example</title>
+  </head>
+  <body>
+    <div class="todoapp" id="root">
+    </div>
+    <!--<script src="./dist/bundle2.js"></script>-->
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.8.1/immutable.min.js"></script>
+
+    <script>
+
+      var assert = console.log;
+      var { Map, List, fromJS, Seq } = Immutable;
+
+      // 对于下面的相应对象, 都是为了方便书写, 定义
+      // 如果是原生的对象, 数组, , 会予以前缀:原生,或标明类型
+      // js里广义上所有类型都抽象为对象, 包括function, 所以在一定程度上不能说一定错, 但是
+
+      // 将对象深层次 immutable 化 允许多层nest嵌套
+      function deep() {
+        // fromJS, Map等 会深层次的immutable化
+        var map11 = Immutable.fromJS({a:1, b: {b2: 2}, c:3});
+        console.log(map11.get('b'));
+        console.log(map11.get('b').get('b2'));
+
+        var map22 = Immutable.Map({a:1, b: {b2: 2}, c:3});
+        console.log(map11.get('b'));
+        console.log(map11.get('b').get('b2'));
+      }
+
+      // list
+      // 获取长度
+      // 对子元素的操作
+      // 获取子元素: get, getIn
+      // 排序 sort, sortBy
+      // 查找, find 返回第一个匹配值, filter 返回 List, filterNot返回不匹配
+      function list() {
+        // 可以直接传值
+        var list1 = Immutable.List.of(1, 2);
+        assert(list1);
+        //        assert(Immutable.List(1, 2));  //  Uncaught TypeError: Expected Array or iterable object of values: 1
+
+        // 获取长度
+        assert(list1.size);   // 2
+        assert(list1.count());   // 2
+
+        var list2 = list1.push(3, 4, 5);
+        var list3 = list2.unshift(0);
+        var list4 = list1.concat(list2, list3);
+//      assert(list1.size === 2);
+//      assert(list2.size === 5);
+//      assert(list3.size === 6);
+//      assert(list4.size === 13);
+        assert(list4.get(0));   //1
+        assert( list4.get(-1) );// 5 #反向索引
+        // react 中判断是否是 List 类型
+//        React.PropTypes.instanceOf(Immutable.List).isRequired
+
+//        排序, 有 sort 和 sortBy:
+//        immutableData.sort((a, b) ->
+//        if a < b then return -1
+//        if a > b then return 1
+//        return 0
+//        immutableData.sortBy (x) ->x
+      }
+//      list();
+
+
+      // api 相等
+      function equl( ) {
+        var map11 = Immutable.Map({a:1, b: {b2: 1}, c:3});
+        var map22 = map11.set('b', {b2: 1});
+
+        // it's important to use the Immutable.is() function or .equals() method to determine value equality instead of the === operator which determines object reference identity.
+        console.log(map11.equals(map22));   // false
+        console.log(Immutable.is(map11, map22)); // false
+
+
+        var map1 = Immutable.Map({a:1, b:1, c:1});
+        var map2 = Immutable.Map({a:1, b:1, c:1});
+        assert(map1 !== map2); // two different instances
+        assert(Immutable.is(map1, map2)); // have equivalent values
+        assert(map1.equals(map2)); // alternatively use the equals method
+
+      }
+//      equl();
+
+      // api 更新值
+      // set
+      // update  --
+      function changeVal() {
+        var map11 = Immutable.fromJS({a:1, b: {b2: 2}, c:3});
+
+        map11 = map11.set('b', map11);  // map11 是一个immutable对象
+        console.log(map11.get('b'));                // immutable对象
+        console.log(map11.get('b').get('b'));       // immutable对象
+        console.log(map11.get('b').get('b').get('b2'));  //2
+
+        // set 方法是直接找到对象的属性(封装过, 找到对应关系), 改变其值
+        // 类似的, get 方法获取其值, 但必须是immutable对象 不然会报错
+        map11 = map11.set('b', {b2: 30});
+        console.log(map11.get('b'));  // Object {b2: 30}
+        console.log(map11.get('b').get('b2'));  // Error: immutable.html:32 Uncaught TypeError: map11.get(...).get is not a function
+      }
+//      changeVal()
+
+      // api map 遍历对象
+      // foreach 遍历(返回 false 会终止遍历):  -- 其他遍历呢
+      function map() {
+        var mapApi1 = Immutable.Map({a:1, b:2, c:3, d:4});
+        var res = mapApi1.map(function(v, k) {
+          return k.toUpperCase()
+        });
+        assert( res, res.join() );// 'A,B,C,D'
+      }
+//      map();
+
+      // 接收原生对象 Accepts raw JavaScript objects.
+      function merge() {
+        var map1 = Immutable.Map({a:1, b:2, c:3, d:4});
+        var map2 = Immutable.Map({c:10, a:20, t:30});
+        var obj = {d:100, o:200, g:300};
+        var map3 = map1.merge(map2, obj);
+        assert(map3);
+        // Map { a: 20, b: 2, c: 10, d: 100, t: 30, o: 200, g: 300 }
+      }
+//      merge();
+
+      // 获得immutable的属性,必须是 string格式(暂时不转换为string)
+      function getProperty() {
+        var obj = { 1: "one" };
+        Object.keys(obj); // [ "1" ]
+        assert(obj["1"]); // "one"
+        assert(obj[1]);   // "one"
+
+        var map = Immutable.fromJS(obj);
+        assert( map.get("1") ); // "one"
+        assert( map.get(1) );   // undefined
+      }
+//      getProperty();
+
+      // 判断属性是否存在( null, undefined 也是存在的):
+      function judgeProperty () {
+        var mapApi1 = Immutable.Map({a:1, b:2, c:3, d:4, nu: null, un: undefined});
+        assert( mapApi1.has('nu') ); // true
+        assert( mapApi1.has('un') ); // true
+        var key = 'nu';
+        assert( mapApi1.has(key) ); // true
+        assert( mapApi1.has('aa') ); // false
+
+      }
+//      judgeProperty()
+
+
+      // 转换为对象数组json
+      function convert() {
+        var deep = Immutable.Map({ a: 1, b: 2, c: Immutable.List.of(3, 4, 5) });
+        assert(deep.toObject()); // shallowly 浅转换  { a: 1, b: 2, c: List [ 3, 4, 5 ] }
+        assert(deep.toArray());  // shallowly 浅转换 [ 1, 2, List [ 3, 4, 5 ] ]
+        assert(deep.toJS());     //   deep 转换 { a: 1, b: 2, c: [ 3, 4, 5 ] }
+        assert(deep.toJSON()); // --  暂时转换不了 { a: 1, b: 2, c: [ 3, 4, 5 ] }
+        assert(JSON.stringify(deep)) // '{"a":1,"b":2,"c":[3,4,5]}'
+
+
+        // toArray
+        // 获取 key 和 value 的数组形式:
+        var mapApi1 = Immutable.Map({a:1, b:2, c:3, d:4});
+        assert(mapApi1.keySeq());     //   deep 转换 { a: 1, b: 2, c: [ 3, 4, 5 ] }
+        assert(mapApi1.valueSeq());     //   deep 转换 { a: 1, b: 2, c: [ 3, 4, 5 ] }
+        assert(mapApi1.toArray());  // [1,2,3,4]
+
+        // 如何获取key的数组形式?
+      }
+      convert();
+
+      //  reading and operating on nested data
+      // mergeDeep 融合两个immutable对象
+      // getIn 获取某值: 访问嵌套数组 or 对象当中的数据()
+      // updateIn 更新某值, update --区别 set --
+      function readAndOpera () {
+        var nested = Immutable.fromJS({a:{b:{c:[3,4,5]}}});
+        // Map { a: Map { b: Map { c: List [ 3, 4, 5 ] } } }
+
+        var nested2 = nested.mergeDeep({a:{b:{d:6}}});
+        // Map { a: Map { b: Map { c: List [ 3, 4, 5 ], d: 6 } } }
+
+        assert( nested2.getIn(['a', 'b', 'd']) );  // 6
+        assert( nested2.getIn(['a', 'b', 'c']).toArray() );  // [3, 4, 5]
+        assert( nested2.getIn(['a', 'b', 'c']).toJS() );  // [3, 4, 5]
+
+        var nested3 = nested2.updateIn(['a', 'b', 'd'], function(value) {
+          return value + 1
+        } );
+        assert( nested3.getIn(['a', 'b', 'd']) );  // 7
+        //nested3: Map { a: Map { b: Map { c: List [ 3, 4, 5 ], d: 7 } } }
+
+        var nested4 = nested3.updateIn(['a', 'b', 'c'], function(list) {
+          return list.push(6)
+        } );
+        assert( nested4 );
+        // Map { a: Map { b: Map { c: List [ 3, 4, 5, 6 ], d: 7 } } }
+        assert( nested4.getIn(['a', 'b', 'c']).toJS() );  // [3, 4, 5, 6]
+      }
+//      readAndOpera();
+
+
+      // seq 不会缓存结果, lazy operation(只对需要的操作进行操作), 能够有效地利用所有的迭代方法链（EX: map, filter)
+      function seq() {
+        var res = Seq({a:1,b:2,c:3}).map(function ( x ) {
+          return x * x;
+        });
+        assert( res.toObject() );  // Object {a: 1, b: 4, c: 9}
+
+        // 一旦所使用，它仅执行必要的工作。在这个示例中，没有创建中间数组，filter被称为三次，而map只被调用了两次
+        var oddSquares = Immutable.Seq.of(1,2,3,4,5,6,7,8)
+          .filter(
+            function (x) {
+              assert( 'filter', x )
+              return x = x % 2
+            })
+          .map(function (x) {
+            assert( 'map', x )
+            return x = x * x
+          });
+        assert(oddSquares.toJS()); //[1, 2, 3, 4, 5, 6, 7, 8]
+        assert(oddSquares.get(1)); // 2
+
+        var seq = Immutable.Map({a:1, b:1, c:1}).toSeq();  //Immutable对象 转换为seq对象
+        assert( seq );
+        assert( seq.flip() );  // -- ?
+
+
+        seq.flip().map(
+          function ( key ) {
+            return key.toUpperCase()
+          })
+          .flip()
+          .toJS();
+        assert( seq );
+        // Map { A: 1, B: 1, C: 1 }
+      }
+//      seq();
+
+
+      // 使用可改变的, 这个和原生的有何不一样? 出发点? --
+      function withMutations( ) {
+        var list1 = Immutable.List.of(1,2,3);
+        var list2 = list1.withMutations(function (list) {
+          list.push(4).push(5).push(6);
+        });
+        assert(list1.size === 3);  // true
+        assert(list2.size === 6);  // true
+      }
+//      withMutations();
+
+      // ## 参考
+      // [用法](https://segmentfault.com/a/1190000002909224)
+      // [immutable官网](https://facebook.github.io/immutable-js/)
+    </script>
+  </body>
+</html>

@@ -5,13 +5,13 @@ module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: [
     'webpack-hot-middleware/client',
-    './index'
-    //'./immutable'
+    //'./index'
+    './immutable'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
-    //filename: 'bundle2.js',
+    //filename: 'bundle.js',
+    filename: 'bundle2.js',
     publicPath: '/static/'
   },
   plugins: [

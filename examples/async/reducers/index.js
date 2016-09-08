@@ -1,3 +1,4 @@
+// 在reducer中加入 immutable!
 import { combineReducers } from 'redux'
 import {
   SELECT_REDDIT, INVALIDATE_REDDIT,

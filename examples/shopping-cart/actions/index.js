@@ -33,7 +33,7 @@ export function addToCart(productId) {
 
 export function checkout(products) {
   return (dispatch, getState) => {
-    const cart = getState().cart
+    const cart = getState().cart;
 
     dispatch({
       type: types.CHECKOUT_REQUEST
