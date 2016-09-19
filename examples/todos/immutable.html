@@ -117,13 +117,42 @@
           return k.toUpperCase()
         });
         assert( res, res.join() );// 'A,B,C,D'
+
+        let $$map = Map.of('a',1, 'b',null, 'c','', 'd', undefined);
+        console.log($$map, $$map.toJS() ,$$map.size ); // Map {size: 4, _root: ArrayMapNode, __ownerID: undefined, __hash: undefined, __altered: false} Object {a: 1, b: null, c: "", d: undefined} 4
+
+
+        // 不改变 $$map
+        console.log( $$map.set( 'a',2 ).toJS() ); //Object {a: 2, b: null, c: "", d: undefined}
+        console.log( $$map.delete( 'b',2 ).toJS() ); //Object {a: 1, d: undefined, c: ""}
+        console.log( $$map.remove( 'c',2 ).toJS() ); //Object {a: 1, b: null, d: undefined}
+        console.log( $$map.clear( 'c',2 ).toJS() ); //Object {}
+        console.log( $$map.update( 'a', function(v) {return v + 1 }).toJS() ); //Object {a: 2, b: null, c: "", d: undefined}
+        console.log( $$map.merge( {'a': 10, 'b': 20}).toJS() ); //Object {a: 10, b: 20, c: "", d: undefined}
+        var x = Immutable.Map({a: 10, b: 20, c: 30});
+        var y = Immutable.Map({a: 50, b: 40,  d: 60});
+// prev 为该对象上使用的 $$, next,为后面传进来的 $$
+        console.log( x.mergeWith( function(prev, next) {return prev / next}, y).toJS()); // { a: 0.2, b: 0.5, c: 30, d: 60 }
+        console.log( y.mergeWith( function(prev, next) {return prev / next}, x).toJS()); // { a: 0.2, b: 0.5, c: 30, d: 60 }
+
+
+        // api
+        var $$map2 = $$map.set( 'a', fromJS({z: 12}) );
+        console.log( $$map2.toJS() ); //Object {a: 2, b: null, c: "", d: undefined}
+        console.log( is($$map2, $$map) ); // false
+// has, includes 仅仅判断浅寻找! 不是深层寻找!
+        console.log( $$map2.has('z') ); // false
+        console.log( $$map2.hasIn('a', 'z') ); // true
+        console.log( $$map2.includes(12) ); //false
+        console.log( $$map2.first() ); //2
+        console.log( $$map2.last() ); //undefined
       }
 //      map();
 
       // 接收原生对象 Accepts raw JavaScript objects.
       function merge() {
         var map1 = Immutable.Map({a:1, b:2, c:3, d:4});
-        var map2 = Immutable.Map({c:10, a:20, t:30});
+        var map2 = Immutable.Map({a:20, c:10, t:30});
         var obj = {d:100, o:200, g:300};
         var map3 = map1.merge(map2, obj);
         assert(map3);
